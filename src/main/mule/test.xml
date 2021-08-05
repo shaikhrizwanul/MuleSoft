@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="4290e777-7f98-40ce-aaed-553fa218b2d0" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="testFlow" doc:id="86936723-f770-4ee0-a571-4614354f0fe4" >
+		<http:listener doc:name="Listener" doc:id="91150d14-3586-4723-a537-315ca1eaed2d" config-ref="HTTP_Listener_config" path="/test"/>
+		<set-payload value="#[[1,2,6,9]]" doc:name="Set Payload" doc:id="0aa0fd8b-e27e-4a43-932c-a201e17741e4" />
+		<set-variable doc:name="Result" doc:id="5a5e5810-7d97-4ce4-bdd0-76c172ab3333" variableName="Result" value="#[[]]"/>
+		<foreach doc:name="For Each" doc:id="0edf27fe-7214-4c5f-a856-e73ce74fca94" >
+			<set-payload value="#[payload + 10]" doc:name="Set Payload" doc:id="54cc857d-1821-4b43-8094-b0425f0cd457" />
+			<set-variable value="#[output application/json --- vars.Result + payload]" doc:name="Result" doc:id="9cdd4898-ea54-48d6-984a-18b9b4bf5dde" variableName="Result"/>
+		</foreach>
+		<ee:transform doc:name="Transform Message" doc:id="71f12691-dea8-4ce3-95fd-2c502d0603e1">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+
+
+output application/json
+---
+
+	
+	Checkresults: vars.Result
+]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+	</flow>
+</mule>
